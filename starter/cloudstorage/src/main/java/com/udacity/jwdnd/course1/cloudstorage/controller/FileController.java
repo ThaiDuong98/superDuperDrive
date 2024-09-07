@@ -18,6 +18,7 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/file")
 public class FileController {
+    public final int MAX_SIZE_FILE = 10 * 1024 * 1024;
     private FileService fileService;
 
     public FileController(FileService fileService){
@@ -26,23 +27,22 @@ public class FileController {
 
     @PostMapping
     public String uploadFile(Authentication auth, MultipartFile fileUpload, Model model) throws IOException {
-        String message = null;
         if(fileUpload.isEmpty()){
-            message = "Please select file before upload";
-            model.addAttribute("errorMessage", message);
+            model.addAttribute("errorMessage", "Please select file before upload.");
+            return "result";
+        }
+
+        if(fileUpload.getSize() > MAX_SIZE_FILE){
+            model.addAttribute("errorMessage", "Maximum size is 10MB, Please try again");
             return "result";
         }
 
         int result = fileService.insertFile(fileUpload, auth.getName());
         if(result > 0){
-            message = "File uploaded successfully";
-            model.addAttribute("successMessage", message);
+            model.addAttribute("successMessage", "File uploaded successfully.");
         }else{
-            message = "File uploaded fail";
-            model.addAttribute("errorMessage", message);
+            model.addAttribute("errorMessage", "File uploaded fail. Please try again.");
         }
-
-        System.out.println(model);
 
         return "result";
     }
