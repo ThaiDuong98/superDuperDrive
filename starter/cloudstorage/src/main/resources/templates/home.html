@@ -134,13 +134,14 @@
                     </div>
                     <!--End Note section-->
 
+                    <!--Start Credential section-->
                     <div class="tab-pane fade" id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
                         <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
                             + Add a New Credential
                         </button>
 
                         <div class="table-responsive">
-                            <table class="table table-striped" th:object="${credentials}" id="credentialTable">
+                            <table class="table table-striped" id="credentialTable">
                                 <thead>
                                     <tr>
                                         <th style="width: 20%" scope="col"></th>
@@ -150,14 +151,28 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:each="credential : ${credentialList}">
                                     <td>
-                                        <button type="button" class="btn btn-success">Edit</button>
-                                        <a class="btn btn-danger">Delete</a>
+                                        <button
+                                            type="button"
+                                            class="btn btn-success"
+                                            th:data-credentialId="${credential.credentialId}"
+                                            th:data-url="${credential.url}"
+                                            th:data-username="${credential.userName}"
+                                            th:data-password="${credential.password}"
+                                            onclick="showCredentialModal(
+                                                this.getAttribute('data-credentialId'),
+                                                this.getAttribute('data-url'),
+                                                this.getAttribute('data-userName'),
+                                                this.getAttribute('data-password'))"
+                                        >
+                                            Edit
+                                        </button>
+                                        <a class="btn btn-danger" th:href="@{/credential/delete/{credentialId}(credentialId=${credential.credentialId})}">Delete</a>
                                     </td>
-                                    <th scope="row">Example Credential URL</th>
-                                    <td>Example Credential Username</td>
-                                    <td>Example Credential Password</td>
+                                    <th scope="row" th:text="${credential.url}"></th>
+                                    <td th:text="${credential.userName}"></td>
+                                    <td th:text="${credential.password}"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -173,7 +188,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
+                                        <form action="#" method="POST" th:action="@{/credential}">
                                             <input type="hidden" name="credentialId" id="credential-id">
                                             <div class="form-group">
                                                 <label for="credential-url" class="col-form-label">URL</label>
@@ -181,7 +196,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="credential-username" class="col-form-label">Username</label>
-                                                <input type="text" name= "username" class="form-control" id="credential-username" maxlength="30" required>
+                                                <input type="text" name= "userName" class="form-control" id="credential-username" maxlength="30" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="credential-password" class="col-form-label">Password</label>

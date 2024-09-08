@@ -18,7 +18,7 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/file")
 public class FileController {
-    public final int MAX_SIZE_FILE = 10 * 1024 * 1024;
+    public final int MAX_SIZE_FILE = 1024 * 1024;
     private FileService fileService;
 
     public FileController(FileService fileService){

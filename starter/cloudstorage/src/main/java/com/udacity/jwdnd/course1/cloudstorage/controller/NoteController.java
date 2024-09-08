@@ -24,8 +24,8 @@ public class NoteController {
         String userName = auth.getName();
 
         if(note.getNoteId() == null){
-            int addNote = noteService.insertNote(userName, note);
-            if(addNote < 0){
+            int newNote = noteService.insertNote(userName, note);
+            if(newNote < 0){
                 model.addAttribute("errorMessage", "Add note fail. Please try again.");
             }else{
                 model.addAttribute("successMessage", "Add note successfully.");
