@@ -11,7 +11,7 @@
     <body class="p-3 mb-2 bg-light text-black">
         <div class="container">
             <div id="logoutDiv">
-                <form action="#" method="POST">
+                <form action="#" method="POST" th:action="@{/logout}">
                     <button type="submit" class="btn btn-secondary float-right">Logout</button>
                 </form>
             </div>
@@ -23,7 +23,9 @@
                         <a class="nav-item nav-link" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>
                     </div>
                 </nav>
+
                 <div class="tab-content" id="nav-tabContent">
+                    <!--Start File section-->
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
                         <form action="#" enctype="multipart/form-data" method="POST" th:action="@{/file}">
                             <div class="container">
@@ -60,6 +62,9 @@
                             </table>
                         </div>
                     </div>
+                    <!--End File section-->
+
+                    <!--Start Note section-->
                     <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
                         <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
                             + Add a New Note
@@ -75,13 +80,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr th:each="note : ${notes}">
                                         <td>
-                                            <button type="button" class="btn btn-success">Edit</button>
-                                            <a class="btn btn-danger">Delete</a>
+                                            <button
+                                                type="button"
+                                                class="btn btn-success"
+                                                th:data-noteId="${note.noteId}"
+                                                th:data-noteTitle="${note.noteTitle}"
+                                                th:data-noteDescription="${note.noteDescription}"
+                                                onclick="showNoteModal(this.getAttribute('data-noteId'), this.getAttribute('data-noteTitle'), this.getAttribute('data-noteDescription'))"
+                                            >
+                                                Edit
+                                            </button>
+                                            <a class="btn btn-danger" th:href="@{/note/delete/{noteId}(noteId=${note.noteId})}">Delete</a>
                                         </td>
-                                        <th scope="row">Example Note Title</th>
-                                        <td>Example Note Description </td>
+                                        <th scope="row" th:text="${note.noteTitle}"></th>
+                                        <td th:text="${note.noteDescription}"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -97,7 +111,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
+                                        <form action="#" method="POST" th:action="@{/note}">
                                             <input type="hidden" name="noteId" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
@@ -118,6 +132,8 @@
                             </div>
                         </div>
                     </div>
+                    <!--End Note section-->
+
                     <div class="tab-pane fade" id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
                         <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
                             + Add a New Credential
@@ -194,6 +210,7 @@
         <script type="text/javascript">
             // For opening the note modal
             function showNoteModal(noteId, noteTitle, noteDescription) {
+                console.log(noteId, noteTitle, noteDescription)
                 $('#note-id').val(noteId ? noteId : '');
                 $('#note-title').val(noteTitle ? noteTitle : '');
                 $('#note-description').val(noteDescription ? noteDescription : '');

@@ -34,6 +34,10 @@ public class FileService {
         File file = new File();
         User user = userMapper.getUser(userName);
 
+        if(user == null){
+            return -1;
+        }
+
         file.setFileName(multipartFile.getOriginalFilename());
         file.setContentType(multipartFile.getContentType());
         file.setFileSize(Long.toString(multipartFile.getSize()));
