@@ -33,7 +33,7 @@ public class FileController {
         }
 
         if(fileUpload.getSize() > MAX_SIZE_FILE){
-            model.addAttribute("errorMessage", "Maximum size of file is 10MB, Please try again");
+            model.addAttribute("errorMessage", "Maximum size of file is 1MB, Please try again");
             return "result";
         }
 
