@@ -33,10 +33,7 @@ public class CredentialService {
     public List<Credential> getAllCredentials(String userName){
         return Optional.ofNullable(userMapper.getUser(userName))
                 .map(user -> credentialMapper.getAllCredentials(user.getUserId()))
-                .orElseGet(ArrayList::new)
-                .stream()
-                .map(this::decryptPassword)
-                .collect(Collectors.toList());
+                .orElseGet(ArrayList::new);
     }
 
     public int insertCredential(Credential credential, String userName){
@@ -51,7 +48,6 @@ public class CredentialService {
         if(user == null){
             return -1;
         }
-        System.out.println("du" + credential);
 
         credential.setPassword(password);
         credential.setUserId(user.getUserId());
@@ -62,10 +58,11 @@ public class CredentialService {
 
     public int updateCredential(Credential credential, String userName){
         Credential exsistCredential = credentialMapper.getCredentialById(credential.getCredentialId());
+        String password = encryptionService.encryptValue(credential.getPassword(), exsistCredential.getKey());
 
         credential.setKey(exsistCredential.getKey());
         credential.setUserId(userMapper.getUser(userName).getUserId());
-        credential.setPassword(exsistCredential.getPassword());
+        credential.setPassword(password);
 
         return credentialMapper.updateCredential(credential);
     }
