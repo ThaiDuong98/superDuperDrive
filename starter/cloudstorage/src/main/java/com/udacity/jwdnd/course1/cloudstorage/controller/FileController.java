@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/file")
@@ -36,6 +37,21 @@ public class FileController {
             model.addAttribute("errorMessage", "Maximum size of file is 1MB, Please try again");
             return "result";
         }
+
+        List<File> existFiles = fileService.getListFileByUser(auth.getName());
+        boolean isDuplicateFile = false;
+        for (File file : existFiles) {
+            if (file.getFileName().equalsIgnoreCase(fileUpload.getOriginalFilename())) {
+                isDuplicateFile = true;
+                break;
+            }
+        }
+
+        if(isDuplicateFile){
+            model.addAttribute("errorMessage", "File already exists.");
+            return "result";
+        }
+
 
         int result = fileService.insertFile(fileUpload, auth.getName());
         if(result > 0){
