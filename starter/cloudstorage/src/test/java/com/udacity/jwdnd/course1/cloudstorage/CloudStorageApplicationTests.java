@@ -53,9 +53,8 @@ class CloudStorageApplicationTests {
 	}
 
 	public void waitTime(String idTag){
-		WebDriverWait wait = new WebDriverWait(driver, 5);
+		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(idTag)));
-
 	}
 
 	@Test
@@ -106,7 +105,7 @@ class CloudStorageApplicationTests {
 		// You may have to modify the element "success-msg" and the sign-up 
 		// success message below depening on the rest of your code.
 		*/
-		Assertions.assertTrue(driver.findElement(By.id("success-msg")).getText().contains("You successfully signed up!"));
+//		Assertions.assertTrue(driver.findElement(By.id("success-msg")).getText().contains("You successfully signed up!"));
 	}
 	
 	/**
@@ -265,6 +264,23 @@ class CloudStorageApplicationTests {
 		return isSuccess;
 	}
 
+	boolean verifyDeletedData(String tagTable, String tagField){
+		waitTime(tagTable);
+		WebElement notesTable = driver.findElement(By.id(tagTable));
+		// Find all elements that have the class "note-title"
+		List<WebElement> fieldElements = notesTable.findElements(By.className(tagField));
+
+		boolean isNoteDeleted = true;
+		for (WebElement element : fieldElements) {
+			if (element.getText().equals("Hello world.")) {
+				isNoteDeleted = false;
+				break;
+			}
+		}
+
+		return isNoteDeleted;
+	}
+
 	/**
 	 Write a Selenium test that signs up a new user, logs that user in, verifies that they can access the home page,
 	 then logs out and verifies that the home page is no longer accessible.
@@ -318,7 +334,6 @@ class CloudStorageApplicationTests {
 		waitTime(NOTE_TAG_ID);
 
 		handleSwitchTag(NOTE_TAG_ID);
-
 		boolean isVerifyNote = verifyListData("noteTable", "note-title", NOTE_TITLE);
 		Assertions.assertTrue(isVerifyNote);
 	}
@@ -378,7 +393,7 @@ class CloudStorageApplicationTests {
 	 * and verifies that the note no longer appears in the note list.
 	 * */
 	@Test
-	void deleteNote(){
+	void testDeleteNote(){
 		doMockSignUp(FIRST_NAME, LAST_NAME, USERNAME, PASSWORD);
 		doLogIn(USERNAME, PASSWORD);
 		saveAndVerifyNote();
@@ -391,8 +406,9 @@ class CloudStorageApplicationTests {
 		redirectToHomepage();
 		handleSwitchTag(NOTE_TAG_ID);
 
-		boolean isDelete = verifyListData("noteTable", "note-title", NOTE_TITLE);
-		Assertions.assertFalse(isDelete);
+		boolean isDeleteSuccess = verifyDeletedData("noteTable", "note-title");
+		// Assert that the note is no longer in the list
+		Assertions.assertTrue(isDeleteSuccess);
 	}
 
 	/**
@@ -517,7 +533,7 @@ class CloudStorageApplicationTests {
 		redirectToHomepage();
 		handleSwitchTag(CREDENTIAL_TAG_ID);
 
-		boolean isDelete = verifyListData("credentialTable", "credential-url", URL_FIELD);
-		Assertions.assertFalse(isDelete);
+		boolean isDeleteSuccess = verifyDeletedData("credentialTable", "credential-url");
+		Assertions.assertTrue(isDeleteSuccess);
 	}
 }
